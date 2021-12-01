@@ -24,7 +24,7 @@ class ttGame(Game):
         return np.full(self.getBoardSize(), -1)
 
     def getActionSize(self):
-        len(_valid_chars)*25
+        len(self._valid_chars)*25
 
     def getValidMoves(self, board, player):
         valids = np.zeros(self.getActionSize())
