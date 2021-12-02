@@ -12,7 +12,7 @@ class ttGame(Game):
     def _getNextPlayIndex(board):
         for j in range(5):
             for i in range(2):
-                if board[i][j]==-1:
+                if board[i][j][0]==-1:
                     return (i,j)
 
         return (-1,-1) # nothing found
@@ -24,7 +24,7 @@ class ttGame(Game):
         return np.full(self.getBoardSize(), -1)
 
     def getActionSize(self):
-        len(self._valid_chars)*25
+        return len(self._valid_chars)*25
 
     def getValidMoves(self, board, player):
         valids = np.zeros(self.getActionSize())
@@ -39,7 +39,7 @@ class ttGame(Game):
             invalid_pos.add(pos)
         for char_i in range(len(self._valid_chars)):
             for pos_i in range(25):
-                char = self._valid_chars[char_id]
+                char = self._valid_chars[char_i]
                 pos = pos_i+1
                 if char in invalid_chars or pos in invalid_pos:
                     continue
@@ -48,11 +48,8 @@ class ttGame(Game):
 
     def getNextState(self, board, player, action): # player == 1 or -1
         i, j = ttGame._getNextPlayIndex(board)
-        for action_i in range(len(action)): # we do this bc getting index using numpy way is slow
-            if action[action_i] != 0:
-                break
-        pos_i = action_i%25
-        char_i = action_i//25
+        pos_i = action%25
+        char_i = action//25
         board_new = np.copy(board)
         board_new[i][j][0] = self._valid_chars[char_i]
         board_new[i][j][1] = pos_i+1
