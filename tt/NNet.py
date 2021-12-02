@@ -46,7 +46,6 @@ class NNetWrapper(NeuralNet):
             v_losses = AverageMeter()
 
             batch_count = int(len(examples) / args.batch_size)
-
             t = tqdm(range(batch_count), desc='Training Net')
             for _ in t:
                 sample_ids = np.random.randint(len(examples), size=args.batch_size)

@@ -58,14 +58,14 @@ class ttGame(Game):
     def getGameEnded(self, board, player):
         if board[-1][-1][0] == -1:
             return 0
-        isWin = board[0][0][0] > board[1][0][0] #TODO
+        isWin = np.sum(board[0]) > np.sum(board[1]) #TODO
         return 1 if isWin else -1
 
     def getCanonicalForm(self, board, player):
         return board
 
     def getSymmetries(self, board, pi):
-        return []
+        return [(board, pi)]
 
     def stringRepresentation(self, board):
         return str(board)
