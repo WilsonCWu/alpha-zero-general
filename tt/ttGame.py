@@ -11,7 +11,7 @@ class ttGame(Game):
     _valid_chars = [0,4,5,6,7,8,9,10,11,12,13,16,17,18,19,21,22,23,24,26,30,31,32,33,34,35,37,38]
     
     def __init__(self):
-        self._num_chars = len(_valid_chars)
+        self._num_chars = len(self._valid_chars)
 
     def getBoardSize(self):
         return (5,10,self._num_chars+1)
@@ -22,6 +22,7 @@ class ttGame(Game):
         board = np.zeros(self.getBoardSize())
         board[:,:5,-1] = 1
         board[:,5:,-1] = -1
+        return board
 
     def getActionSize(self):
         return 5*5*self._num_chars
@@ -65,8 +66,8 @@ class ttGame(Game):
         return json.loads(response.text.lower())
 
     def getGameEnded(self, board, player):
-        numPlaced = len(np.where(board[:,:,-1])[0])
-        assert numPlaced <= 10
+        numPlaced = len(np.where(board[:,:,:-1] == 1)[0])
+        assert numPlaced <= 10, numPlaced
         if numPlaced < 10:
             return 0
         isWin = self._checkServerWin(board)
