@@ -28,7 +28,7 @@ class ttGame(Game):
         return self._num_chars*5*5
 
     def getValidMoves(self, board, player):
-        pBoard = board[:,:,:5]
+        pBoard = board[:,:,:5].copy()
         for h in range(5):
             for v in range(5):
                 pBoard[:self._num_chars,h,v] = 0 if 1 in pBoard[:self._num_chars,h,v] else 1
