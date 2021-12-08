@@ -15,8 +15,6 @@ class ttGame(Game):
 
     def getBoardSize(self):
         return (self._num_chars+1,5,10)
-    def _getHalfBoardSize(self):
-        return (self._num_chars+1,5,5)
 
     def getInitBoard(self):
         board = np.zeros(self.getBoardSize())
@@ -28,42 +26,47 @@ class ttGame(Game):
         return self._num_chars*5*5
 
     def getValidMoves(self, board, player):
-        pBoard = board[:,:,:5].copy()
+        pBoard = board[:self._num_chars,:,:5].copy()
         for h in range(5):
             for v in range(5):
-                pBoard[:self._num_chars,h,v] = 0 if 1 in pBoard[:self._num_chars,h,v] else 1
+                pBoard[:,h,v] = 0 if 1 in pBoard[:,h,v] else 1
         return pBoard.flatten()
 
 
     def getNextState(self, board, player, action): # player == 1 or -1
-        assert player == board[-1,0,0]
-        move = [0]*self.getActionSize()
+        #assert player == board[-1,0,0], f"{player}, {board[-1,0,0]}"
+        move = np.zeros(self.getActionSize())
         move[action] = 1
+        move = move.reshape((self._num_chars,5,5))
         newBoard = np.copy(board)
-        newBoard[:,:,:5] += move.reshape(self._getHalfBoardSize())
+        if player == 1:
+            newBoard[:self._num_chars,:,:5] += move
+        else:
+            newBoard[:self._num_chars,:,5:] += move
 
         return (newBoard, -player)
 
-    def _maxPrestige(charType):
+    def _maxPrestige(self, charType):
         #there is currently a unity side hack to fix this to 10 star
         return -1
 
-    def _createPlacementJsonStr(board):
+    def _createPlacementJsonStr(self, board):
         formatData = []
         setValuesP1 = np.where(board[:self._num_chars,:,:5] == 1)
         setValuesP2 = np.where(board[:self._num_chars,:,5:] == 1)
 
         setValues = [[*setValuesP1[0],*setValuesP2[0]],[*setValuesP1[1],*setValuesP2[1]],[*setValuesP1[2],*setValuesP2[2]]]
-        for h,v,char_i in zip(setValues):
+        for h,v,char_i in zip(*setValues):
             curCharType = self._valid_chars[char_i]
-            formatData.extend([v*5+h, curCharType, 240, _maxPrestige(curCharType)])
+            formatData.extend([v*5+h, curCharType, 240, self._maxPrestige(curCharType)])
         return placementStr % tuple(formatData)
 
     def _checkServerWin(self, board):
         assert board[-1,0,0] == 1
-        placementJsonStr = ttGame._createPlacementJsonStr(board)
+        placementJsonStr = self._createPlacementJsonStr(board)
         response = requests.get("http://localhost:8007/simulate/", data=placementJsonStr)
-        return json.loads(response.text.lower())
+        assert response.status_code == 200
+        return response.content == b"True"
 
     def getGameEnded(self, board, player):
         numPlaced = len(np.where(board[:-1,:,:] == 1)[0])
@@ -76,7 +79,7 @@ class ttGame(Game):
 
     def getCanonicalForm(self, board, player):
         newBoard = np.copy(board)
-        if newBoard[-1,0,0] == player:
+        if player == 1:
             return newBoard
         newBoard[:,:,:5], newBoard[:,:,5:] = newBoard[:,:,5:], newBoard[:,:,:5].copy()
         return newBoard
