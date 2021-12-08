@@ -30,9 +30,15 @@ class ttGame(Game):
             pBoard = board[:self._num_chars,:,:5].copy()
         else:
             pBoard = board[:self._num_chars,:,5:].copy()
+
+        seenCharIndexes = np.where(pBoard == 1)[0]
+
         for h in range(5):
             for v in range(5):
-                pBoard[:,h,v] = 0 if 1 in pBoard[:,h,v] else 1
+                pBoard[:,h,v] = 0 if (1 in pBoard[:,h,v]) else 1
+
+        for char_i in seenCharIndexes:
+            pBoard[char_i,:,:] = 0
         return pBoard.flatten()
 
 
@@ -74,8 +80,8 @@ class ttGame(Game):
         return response.content == b"True"
 
     def getGameEnded(self, board, player):
-        numPlaced = len(np.where(board[:self._num_chars,:,:] == 1)[0])
-        assert numPlaced <= 10, numPlaced
+        numPlaced = np.sum(board)
+        assert np.sum(board) <= 10
         if numPlaced < 10:
             return 0
         assert self._isBoardValid(board), self.stringRepresentation(board)
