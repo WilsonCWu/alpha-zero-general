@@ -3,9 +3,12 @@ import sys
 sys.path.append('..')
 from Game import Game
 import numpy as np
+import requests
+import json
+placementStr = open("placement.json").read()
 
 class ttGame(Game):
-    _valid_chars = [0,1,2,3,4,5]
+    _valid_chars = [0,4,5,6,7,8,9,10,11,12,13,16,17,18,19,21,22,23,24,26,30,31,32,33,34,35,37,38]
     def __init__(self):
         pass
     
@@ -18,7 +21,7 @@ class ttGame(Game):
         return (-1,-1) # nothing found
 
     def getBoardSize(self):
-        return (2,5,2)
+        return (2,5,2) # 5*10*_valid_chars
 
     def getInitBoard(self):
         return np.full(self.getBoardSize(), -1)
@@ -55,10 +58,23 @@ class ttGame(Game):
         board_new[i][j][1] = pos_i+1
         return (board_new, -player)
 
+    def _maxPrestige(charType):
+        print("todo")
+
+    def _createPlacementJsonStr(board):
+        formatData = []
+
+        return placementStr % tuple(formatData)
+
+    def _checkServerWin(self, board):
+        placementJsonStr = ttGame._createPlacementJsonStr(board)
+        response = requests.get("http://localhost:8007/simulate/", data=placementJsonStr)
+        return json.loads(response.text.lower())
+
     def getGameEnded(self, board, player):
         if board[-1][-1][0] == -1:
             return 0
-        isWin = np.sum(board[0]) > np.sum(board[1]) #TODO
+        isWin = self._checkServerWin(board)
         return 1 if isWin else -1
 
     def getCanonicalForm(self, board, player):
