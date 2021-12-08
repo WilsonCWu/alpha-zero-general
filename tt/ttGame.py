@@ -73,8 +73,8 @@ class ttGame(Game):
         assert numPlaced <= 10, numPlaced
         if numPlaced < 10:
             return 0
+        assert self._isBoardValid(board), self.stringRepresentation(board)
         isWin = self._checkServerWin(board)
-        print(self.stringRepresentation(board))
         return 1 if isWin else -1
 
     def getCanonicalForm(self, board, player):
@@ -86,6 +86,22 @@ class ttGame(Game):
 
     def getSymmetries(self, board, pi):
         return [(board, pi)]
+
+    def _isBoardValid(self, board):
+        setValuesP1 = np.where(board[:self._num_chars,:,:5] == 1)
+        setValuesP2 = np.where(board[:self._num_chars,:,5:] == 1)
+        def checkForPlayer(setValues):
+            seenChars = set()
+            seenPos = set()
+            for h,v,char_i in zip(*setValuesP1):
+                pos = v*5+h
+                char = self._valid_chars[char_i]
+                if pos in seenPos or char in seenChars:
+                    return False
+                seenPos.add(pos)
+                seenChars.add(char)
+            return True
+        return checkForPlayer(setValuesP1) and checkForPlayer(setValuesP2)
 
     def stringRepresentation(self, board):
         ret = []
