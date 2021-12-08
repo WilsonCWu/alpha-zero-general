@@ -54,6 +54,8 @@ class ttGame(Game):
         formatData = []
         setValuesP1 = np.where(board[:self._num_chars,:,:5] == 1)
         setValuesP2 = np.where(board[:self._num_chars,:,5:] == 1)
+        if board[-1,0,0] == -1:
+            setValuesP1, setValuesP2 = setValuesP2, setValuesP1
 
         setValues = [[*setValuesP1[0],*setValuesP2[0]],[*setValuesP1[1],*setValuesP2[1]],[*setValuesP1[2],*setValuesP2[2]]]
         for h,v,char_i in zip(*setValues):
@@ -73,9 +75,10 @@ class ttGame(Game):
         assert numPlaced <= 10, numPlaced
         if numPlaced < 10:
             return 0
+        assert player == 1
         assert self._isBoardValid(board), self.stringRepresentation(board)
-        isWin = self._checkServerWin(board)
-        return 1 if isWin else -1
+        isP1Win = self._checkServerWin(board)
+        return 1 if isP1Win == (board[-1,0,0] == 1) else -1
 
     def getCanonicalForm(self, board, player):
         newBoard = np.copy(board)
