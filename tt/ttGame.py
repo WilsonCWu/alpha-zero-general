@@ -26,7 +26,10 @@ class ttGame(Game):
         return self._num_chars*5*5
 
     def getValidMoves(self, board, player):
-        pBoard = board[:self._num_chars,:,:5].copy()
+        if player == 1:
+            pBoard = board[:self._num_chars,:,:5].copy()
+        else:
+            pBoard = board[:self._num_chars,:,5:].copy()
         for h in range(5):
             for v in range(5):
                 pBoard[:,h,v] = 0 if 1 in pBoard[:,h,v] else 1
@@ -58,9 +61,9 @@ class ttGame(Game):
             setValuesP1, setValuesP2 = setValuesP2, setValuesP1
 
         setValues = [[*setValuesP1[0],*setValuesP2[0]],[*setValuesP1[1],*setValuesP2[1]],[*setValuesP1[2],*setValuesP2[2]]]
-        for h,v,char_i in zip(*setValues):
+        for char_i,h,v in zip(*setValues):
             curCharType = self._valid_chars[char_i]
-            formatData.extend([v*5+h, curCharType, 240, self._maxPrestige(curCharType)])
+            formatData.extend([v*5+h+1, curCharType, 240, self._maxPrestige(curCharType)])
         return placementStr % tuple(formatData)
 
     def _checkServerWin(self, board):
@@ -71,11 +74,10 @@ class ttGame(Game):
         return response.content == b"True"
 
     def getGameEnded(self, board, player):
-        numPlaced = len(np.where(board[:-1,:,:] == 1)[0])
+        numPlaced = len(np.where(board[:self._num_chars,:,:] == 1)[0])
         assert numPlaced <= 10, numPlaced
         if numPlaced < 10:
             return 0
-        assert player == 1
         assert self._isBoardValid(board), self.stringRepresentation(board)
         isP1Win = self._checkServerWin(board)
         return 1 if isP1Win == (board[-1,0,0] == 1) else -1
@@ -96,8 +98,8 @@ class ttGame(Game):
         def checkForPlayer(setValues):
             seenChars = set()
             seenPos = set()
-            for h,v,char_i in zip(*setValuesP1):
-                pos = v*5+h
+            for char_i, h, v in zip(*setValuesP1):
+                pos = v*5+h+1
                 char = self._valid_chars[char_i]
                 if pos in seenPos or char in seenChars:
                     return False
@@ -110,13 +112,13 @@ class ttGame(Game):
         ret = []
         ret.append(f"Player {board[-1,0,0]}")
         setValuesP1 = np.where(board[:self._num_chars,:,:5] == 1)
-        for h,v,char_i in zip(*setValuesP1):
-            ret.append(f"{h+v*5}: {self._valid_chars[char_i]}")
+        for char_i, h, v in zip(*setValuesP1):
+            ret.append(f"{h+1+v*5}: {self._valid_chars[char_i]}")
 
         ret.append(f"Player {board[-1,-1,-1]}")
         setValuesP2 = np.where(board[:self._num_chars,:,5:] == 1)
-        for h,v,char_i in zip(*setValuesP2):
-            ret.append(f"{h+v*5}: {self._valid_chars[char_i]}")
+        for char_i, h, v in zip(*setValuesP2):
+            ret.append(f"{h+1+v*5}: {self._valid_chars[char_i]}")
         return "\n".join(ret)
 
 
