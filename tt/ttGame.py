@@ -93,8 +93,6 @@ class ttGame(Game):
 
     def getGameEnded(self, board, player):
         numPlaced = np.sum(board)
-        if numPlaced == 2:
-            return 1
         assert np.sum(board) <= 10
         if numPlaced < 10:
             return 0
