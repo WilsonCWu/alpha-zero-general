@@ -141,5 +141,25 @@ class ttGame(Game):
             ret.append(f"{h+1+v*5}: {self._valid_chars[char_i]}")
         return "\n".join(ret)
 
+    @staticmethod
+    def display(board):
+        n = board.shape[0]
+        print("")
+        print("-----------------------")
+        _num_chars = len(ttGame._valid_chars)
+        ret = []
+        ret.append(f"Player {board[-1,0,0]}")
+        setValuesP1 = np.where(board[:_num_chars,:,:5] == 1)
+        for char_i, h, v in zip(*setValuesP1):
+            ret.append(f"{h+1+v*5}: {ttGame._valid_chars[char_i]}")
+
+        ret.append(f"Player {board[-1,-1,-1]}")
+        setValuesP2 = np.where(board[:_num_chars,:,5:] == 1)
+        for char_i, h, v in zip(*setValuesP2):
+            ret.append(f"{h+1+v*5}: {ttGame._valid_chars[char_i]}")
+        return "\n".join(ret)
+
+        print("-----------------------")
+
 
 

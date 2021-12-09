@@ -45,6 +45,6 @@ else:
 
     player2 = n2p  # Player 2 is neural network if it's cpu vs cpu.
 
-arena = Arena.Arena(n1p, player2, g, display=OthelloGame.display)
+arena = Arena.Arena(n1p, player2, g, display=Game.display)
 
 print(arena.playGames(2, verbose=True))
