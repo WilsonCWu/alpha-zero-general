@@ -77,11 +77,14 @@ class ttGame(Game):
         placementJsonStr = self._createPlacementJsonStr(board)
         while True:
             try:
-                response = requests.get("http://localhost:8007/simulate/", data=placementJsonStr, timeout=10)
+                response = requests.get("http://192.168.0.24:8007/simulate/", data=placementJsonStr, timeout=10)
                 if response.status_code == 200:
                     break
                 else:
                     print(f"response code {response.status_code}")
+            except KeyboardInterrupt:
+                print("exiting")
+                sys.exit()
             except:
                 print("timed out")
         
@@ -90,6 +93,8 @@ class ttGame(Game):
 
     def getGameEnded(self, board, player):
         numPlaced = np.sum(board)
+        if numPlaced == 2:
+            return 1
         assert np.sum(board) <= 10
         if numPlaced < 10:
             return 0
