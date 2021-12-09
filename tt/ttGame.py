@@ -77,7 +77,7 @@ class ttGame(Game):
         placementJsonStr = self._createPlacementJsonStr(board)
         while True:
             try:
-                response = requests.get("http://192.168.0.24:8007/simulate/", data=placementJsonStr, timeout=10)
+                response = requests.get("http://192.168.0.24:8007/simulate/1337/", data=placementJsonStr, timeout=10)
                 if response.status_code == 200:
                     break
                 else:
