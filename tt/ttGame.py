@@ -75,7 +75,16 @@ class ttGame(Game):
     def _checkServerWin(self, board):
         assert board[-1,0,0] == 1
         placementJsonStr = self._createPlacementJsonStr(board)
-        response = requests.get("http://localhost:8007/simulate/", data=placementJsonStr)
+        while True:
+            try:
+                response = requests.get("http://localhost:8007/simulate/", data=placementJsonStr, timeout=10)
+                if response.status_code == 200:
+                    break
+                else:
+                    print(f"response code {response.status_code}")
+            except:
+                print("timed out")
+        
         assert response.status_code == 200
         return response.content == b"True"
 
