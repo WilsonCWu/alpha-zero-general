@@ -145,7 +145,7 @@ class ttGame(Game):
     def display(board):
         n = board.shape[0]
         print("")
-        print("-----------------------")
+        print(">S--------------------<")
         _num_chars = len(ttGame._valid_chars)
         ret = []
         ret.append(f"Player {board[-1,0,0]}")
@@ -159,7 +159,7 @@ class ttGame(Game):
             ret.append(f"{h+1+v*5}: {ttGame._valid_chars[char_i]}")
         print("\n".join(ret))
 
-        print("-----------------------")
+        print("<E-------------------->")
 
 
 
