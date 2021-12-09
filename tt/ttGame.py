@@ -157,7 +157,7 @@ class ttGame(Game):
         setValuesP2 = np.where(board[:_num_chars,:,5:] == 1)
         for char_i, h, v in zip(*setValuesP2):
             ret.append(f"{h+1+v*5}: {ttGame._valid_chars[char_i]}")
-        return "\n".join(ret)
+        print("\n".join(ret))
 
         print("-----------------------")
 

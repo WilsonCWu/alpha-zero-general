@@ -5,7 +5,7 @@ class HumanTTPlayer():
         self.game = game
 
     def play(self, board):
-        print(game.stringRepresentation(board))
+        print(self.game.stringRepresentation(board))
         valid = self.game.getValidMoves(board, 1)
         while True:
             input_move = input()
@@ -15,9 +15,9 @@ class HumanTTPlayer():
                     pos, charType = [int(i) for i in input_a]
                     v = (pos-1)//5
                     h = (pos-1)%5
-                    move = np.zeros((self._num_chars,5,5))
-                    move[game._valid_chars.find(charType),h,v] = 1
-                    a = move.flatten().find(1)
+                    move = np.zeros((self.game._num_chars,5,5))
+                    move[self.game._valid_chars.index(charType),h,v] = 1
+                    a = move.flatten().tolist().index(1)
                     if valid[a]:
                         break
                 except ValueError:
